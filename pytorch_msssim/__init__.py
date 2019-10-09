@@ -132,10 +132,13 @@ class SSIM(torch.nn.Module):
 
         # Assume 1 channel for SSIM
         self.channel = 1
-        self.window = create_window(window_size,image_dim(img1))
+        self.window = None
 
     def forward(self, img1, img2):
         (_, channel, _, _) = img1.size()
+        #Initialize window on first call
+        if self.window is None:
+            create_window(self.window_size, image_dim(img1)).to(img1.device).type(img1.dtype)
 
         if channel == self.channel and self.window.dtype == img1.dtype:
             window = self.window
